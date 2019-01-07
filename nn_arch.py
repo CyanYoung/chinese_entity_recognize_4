@@ -1,23 +1,40 @@
-from keras.layers import LSTM, Conv1D, Dense, Bidirectional, Dropout
+import torch.nn as nn
 
 
 win_len = 7
 
 
-def cnn(embed_input, class_num):
-    ca = Conv1D(filters=128, kernel_size=win_len, padding='valid', activation='relu')
-    da1 = Dense(200, activation='relu')
-    da2 = Dense(class_num, activation='softmax')
-    x = ca(embed_input)
-    x = da1(x)
-    x = Dropout(0.2)(x)
-    return da2(x)
+class Cnn(nn.Module):
+    def __init__(self, embed_mat, class_num):
+        super(Cnn, self).__init__()
+        vocab_num, embed_len = embed_mat.size()
+        self.embed = nn.Embedding(vocab_num, embed_len, _weight=embed_mat)
+        self.ca = nn.Sequential(nn.Conv1d(embed_len, 128, kernel_size=win_len, padding=0),
+                                nn.ReLU())
+        self.la = nn.Sequential(nn.Linear(128, 200),
+                                nn.ReLU())
+        self.dl = nn.Sequential(nn.Dropout(0.2),
+                                nn.Linear(200, class_num))
+
+    def forward(self, x):
+        x = self.embed(x)
+        x = x.permute(0, 2, 1)
+        x = self.ca(x)
+        x = x.permute(0, 2, 1)
+        x = self.la(x)
+        return self.dl(x)
 
 
-def rnn(embed_input, class_num):
-    ra = LSTM(200, activation='tanh', return_sequences=True)
-    ba = Bidirectional(ra, merge_mode='concat')
-    da = Dense(class_num, activation='softmax')
-    x = ba(embed_input)
-    x = Dropout(0.5)(x)
-    return da(x)
+class Rnn(nn.Module):
+    def __init__(self, embed_mat, class_num):
+        super(Rnn, self).__init__()
+        vocab_num, embed_len = embed_mat.size()
+        self.embed = nn.Embedding(vocab_num, embed_len, _weight=embed_mat)
+        self.ra = nn.LSTM(embed_len, 200, batch_first=True, bidirectional=True)
+        self.dl = nn.Sequential(nn.Dropout(0.2),
+                                nn.Linear(400, class_num))
+
+    def forward(self, x):
+        x = self.embed(x)
+        h, hc_n = self.ra(x)
+        return self.dl(h)
