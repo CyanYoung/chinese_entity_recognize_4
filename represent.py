@@ -82,9 +82,9 @@ def label2ind(sents, path_label_ind):
 def add_buf(seqs):
     buf = [0] * int((win_len - 1) / 2)
     buf_seqs = list()
-    for seq in seqs.tolist():
+    for seq in seqs:
         buf_seqs.append(buf + seq + buf)
-    return np.array(buf_seqs)
+    return buf_seqs
 
 
 def align_sent(text_words, path_sent, extra):
@@ -94,9 +94,9 @@ def align_sent(text_words, path_sent, extra):
     for words in text_words:
         pad_seq = sent2ind(words, word_inds, seq_len, keep_oov=True)
         pad_seqs.append(pad_seq)
-    pad_seqs = np.array(pad_seqs)
     if extra:
         pad_seqs = add_buf(pad_seqs)
+    pad_seqs = np.array(pad_seqs)
     with open(path_sent, 'wb') as f:
         pk.dump(pad_seqs, f)
 
