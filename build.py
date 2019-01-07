@@ -14,6 +14,8 @@ from util import map_item
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+detail = False if torch.cuda.is_available() else True
+
 batch_size = 32
 
 path_embed = 'feat/embed.pkl'
@@ -68,11 +70,14 @@ def get_loader(pairs):
 
 def get_metric(model, loss_func, pairs):
     sents, labels = pairs
+    labels = labels.view(-1)
+    num = (labels > 0).sum().item()
     prods = model(sents)
+    prods = prods.view(-1, prods.size(-1))
     preds = torch.max(prods, 1)[1]
     loss = loss_func(prods, labels)
     acc = (preds == labels).sum().item()
-    return loss, acc, len(preds)
+    return loss, acc, num
 
 
 def batch_train(model, loss_func, optim, loader, detail):
@@ -146,7 +151,7 @@ if __name__ == '__main__':
     path_feats['sent_dev'] = 'feat/cnn_sent_dev.pkl'
     path_feats['label_train'] = 'feat/label_train.pkl'
     path_feats['label_dev'] = 'feat/label_dev.pkl'
-    fit('cnn', 50, embed_mat, class_num, path_feats, detail=False)
+    fit('cnn', 50, embed_mat, class_num, path_feats, detail)
     path_feats['sent_train'] = 'feat/rnn_sent_train.pkl'
     path_feats['sent_dev'] = 'feat/rnn_sent_dev.pkl'
-    fit('rnn', 50, embed_mat, class_num, path_feats, detail=False)
+    fit('rnn', 50, embed_mat, class_num, path_feats, detail)
