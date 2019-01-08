@@ -9,7 +9,7 @@ from util import sent2label
 
 
 embed_len = 200
-min_freq = 3
+min_freq = 1
 max_vocab = 5000
 win_len = 7
 seq_len = 50
