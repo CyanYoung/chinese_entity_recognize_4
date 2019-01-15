@@ -20,9 +20,9 @@ class Cnn(nn.Module):
     def forward(self, x):
         x = self.embed(x)
         x = x.permute(0, 2, 1)
-        c = self.conv(x)
         g = torch.sigmoid(self.gate(x))
-        x = c * g
+        x = self.conv(x)
+        x = x * g
         x = x.permute(0, 2, 1)
         x = self.la(x)
         return self.dl(x)
