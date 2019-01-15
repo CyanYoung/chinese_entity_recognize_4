@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 
 
@@ -9,8 +10,8 @@ class Cnn(nn.Module):
         super(Cnn, self).__init__()
         vocab_num, embed_len = embed_mat.size()
         self.embed = nn.Embedding(vocab_num, embed_len, _weight=embed_mat)
-        self.ca = nn.Sequential(nn.Conv1d(embed_len, 128, kernel_size=win_len, padding=0),
-                                nn.ReLU())
+        self.conv = nn.Conv1d(embed_len, 128, kernel_size=win_len, padding=0)
+        self.gate = nn.Conv1d(embed_len, 128, kernel_size=win_len, padding=0)
         self.la = nn.Sequential(nn.Linear(128, 200),
                                 nn.ReLU())
         self.dl = nn.Sequential(nn.Dropout(0.2),
@@ -19,7 +20,9 @@ class Cnn(nn.Module):
     def forward(self, x):
         x = self.embed(x)
         x = x.permute(0, 2, 1)
-        x = self.ca(x)
+        c = self.conv(x)
+        g = torch.sigmoid(self.gate(x))
+        x = c * g
         x = x.permute(0, 2, 1)
         x = self.la(x)
         return self.dl(x)
