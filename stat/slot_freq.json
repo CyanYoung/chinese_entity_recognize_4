@@ -1,18 +1,12 @@
 {
-    "I-CITY": 6264,
-    "I-PROV": 6178,
-    "I-ROAD": 5833,
-    "I-DIST": 5549,
-    "I-TOWN": 4458,
-    "I-DIST_CITY": 3026,
-    "B-PROV": 3018,
-    "B-CITY": 3018,
-    "B-DIST": 2916,
-    "I-PROV_CITY": 2688,
-    "B-TOWN": 2229,
-    "B-ROAD": 2133,
-    "B-DIST_CITY": 1446,
-    "B-PROV_CITY": 1344,
-    "I-VILL": 16,
-    "B-VILL": 7
+    "I-ORG": 36855,
+    "I-LOC": 20742,
+    "I-PER": 17747,
+    "B-LOC": 15264,
+    "B-ORG": 10356,
+    "B-PER": 9309,
+    "I-TYP": 2365,
+    "B-POS": 1619,
+    "I-POS": 1619,
+    "B-TYP": 1582
 }
