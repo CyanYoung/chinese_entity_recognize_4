@@ -46,7 +46,7 @@ def predict(text, name):
     model = map_item(name, models)
     with torch.no_grad():
         model.eval()
-        probs = F.softmax(model(sent), dim=1)
+        probs = F.softmax(model(sent), dim=-1)
     probs = probs.numpy()[0]
     inds = np.argmax(probs, axis=1)
     preds = [ind_labels[ind] for ind in inds[-len(text):]]
