@@ -38,7 +38,6 @@ models = {'cnn': torch.load(map_item('cnn', paths), map_location=device),
 
 
 def predict(text, name):
-    text = text.strip()
     pad_seq = sent2ind(text, word_inds, seq_len, keep_oov=True)
     if name == 'cnn':
         pad_seq = add_buf([pad_seq])[0]
